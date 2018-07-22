@@ -8,6 +8,6 @@
   web.ip_address2: 192.168.1.17
   web.box: "ubuntu/trusty64"
 
-  Common Configuration:  
+  
+  Common Configuration:
   scriptpath: "provisioning/provision.sh"
-

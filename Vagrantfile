@@ -6,6 +6,7 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 
+# Loading configuration file
 require 'yaml'
 settings = YAML.load_file 'provisioning/config.yml'
 
@@ -16,26 +17,28 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  # config.vm.box = "base"
+  
+  # Webservers configuration.
+    webserverIP_1 = settings['web.ip_address1']
+    webserverIP_2 = settings['web.ip_address2']
 
-  # Webservers configuration	
   N = 2
   (1..N).each do |id|
     config.vm.define "web#{id}" do |web|
       web.vm.box = settings['web.box']
       web.vm.hostname = "akkrooweb#{id}"
-      web.vm.network "private_network", ip: settings["web.ip_address#{id}"] 
+      web.vm.network "private_network", ip: settings["web.ip_address#{id}"]
       web.vm.provision :shell, :path => settings['scriptpath'], :args => ["web","web#{id}"], :run => 'always'
     end
-  end  	
-  
-  # Loadbalancer configuration
+  end  
+
+  # Loadbalancer configuration. 
   config.vm.define "lb" do |lb|
-	lb.vm.box = settings['lb.box']
-        lb.vm.hostname = "akkroolb"
-	lb.vm.network "private_network", ip: settings['lb.ip_address']
-	lb.vm.provision :shell, :path => settings['scriptpath'], :args => ["lb"], :run => 'always'		
-  end	
+	  lb.vm.box = settings['lb.box']
+	  lb.vm.hostname = "akkroolb"
+    lb.vm.network "private_network", ip: settings['lb.ip_address']
+    lb.vm.provision :shell, :path => settings['scriptpath'], :args => ["lb","#{webserverIP_1}","#{webserverIP_2}"], :run => 'always'
+  end  
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
