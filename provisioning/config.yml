@@ -1,0 +1,13 @@
+---
+  Loadbalancer Configuration:
+  lb.ip_address: 192.168.1.15
+  lb.box: "ubuntu/trusty64"
+
+  Webserver Configuration:
+  web.ip_address1: 192.168.1.16
+  web.ip_address2: 192.168.1.17
+  web.box: "ubuntu/trusty64"
+
+  Common Configuration:  
+  scriptpath: "provisioning/provision.sh"
+

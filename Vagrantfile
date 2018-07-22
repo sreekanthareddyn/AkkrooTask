@@ -5,6 +5,10 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+
+require 'yaml'
+settings = YAML.load_file 'provisioning/config.yml'
+
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
@@ -18,19 +22,19 @@ Vagrant.configure("2") do |config|
   N = 2
   (1..N).each do |id|
     config.vm.define "web#{id}" do |web|
-      web.vm.box = "ubuntu/trusty64" 
+      web.vm.box = settings['web.box']
       web.vm.hostname = "akkrooweb#{id}"
-      web.vm.network "private_network", ip: "192.168.1.#{15+id}"
-      web.vm.provision :shell, :path => "provisioning/provision.sh", :args => ["web","web#{id}"], :run => 'always'
+      web.vm.network "private_network", ip: settings["web.ip_address#{id}"] 
+      web.vm.provision :shell, :path => settings['scriptpath'], :args => ["web","web#{id}"], :run => 'always'
     end
   end  	
   
   # Loadbalancer configuration
   config.vm.define "lb" do |lb|
-	lb.vm.box = "ubuntu/trusty64"
+	lb.vm.box = settings['lb.box']
         lb.vm.hostname = "akkroolb"
-	lb.vm.network "private_network", ip: "192.168.1.15"
-	lb.vm.provision :shell, :path => "provisioning/provision.sh", :args => ["lb"], :run => 'always'		
+	lb.vm.network "private_network", ip: settings['lb.ip_address']
+	lb.vm.provision :shell, :path => settings['scriptpath'], :args => ["lb"], :run => 'always'		
   end	
 
   # Disable automatic box update checking. If you disable this, then
