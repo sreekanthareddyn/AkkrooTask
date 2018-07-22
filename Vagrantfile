@@ -13,6 +13,16 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   # config.vm.box = "base"
+
+  # Webservers configuration	
+  N = 2
+  (1..N).each do |id|
+    config.vm.define "web#{id}" do |web|
+      web.vm.box = "ubuntu/trusty64" 
+      web.vm.network "private_network", ip: "192.168.1.#{15+id}"
+      web.vm.provision :shell, :path => "provisioning/provision.sh"
+    end
+  end  	
   
   # Loadbalancer configuration
   config.vm.define "lb" do |lb|
