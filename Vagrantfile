@@ -19,16 +19,18 @@ Vagrant.configure("2") do |config|
   (1..N).each do |id|
     config.vm.define "web#{id}" do |web|
       web.vm.box = "ubuntu/trusty64" 
+      web.vm.hostname = "akkrooweb#{id}"
       web.vm.network "private_network", ip: "192.168.1.#{15+id}"
-      web.vm.provision :shell, :path => "provisioning/provision.sh"
+      web.vm.provision :shell, :path => "provisioning/provision.sh", :args => ["web","web#{id}"], :run => 'always'
     end
   end  	
   
   # Loadbalancer configuration
   config.vm.define "lb" do |lb|
 	lb.vm.box = "ubuntu/trusty64"
+        lb.vm.hostname = "akkroolb"
 	lb.vm.network "private_network", ip: "192.168.1.15"
-	lb.vm.provision :shell, :path => "provisioning/provision.sh"
+	lb.vm.provision :shell, :path => "provisioning/provision.sh", :args => ["lb"], :run => 'always'		
   end	
 
   # Disable automatic box update checking. If you disable this, then
